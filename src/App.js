@@ -1,24 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.scss";
+import { useCallback, useState } from "react";
+import Popup from "./Components/Common/Popup";
+import SetPeriod from "./Components/SetPeriod";
 
 function App() {
+  const [popup, setPopup] = useState(false);
+
+  const togglePopup = useCallback(() => {
+    setPopup(!popup);
+  }, [popup]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className={"App"}>
+        <button className={"btn"} onClick={togglePopup}>
+          응시기간 설정 대화상자 열기
+        </button>
+        {popup && (
+            <Popup
+                title={"응시 기간 설정"}
+                body={<SetPeriod />}
+                close={togglePopup}
+                confirm={togglePopup}
+            />
+        )}
+      </div>
   );
 }
 
