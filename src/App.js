@@ -1,5 +1,5 @@
 import "./App.scss";
-import { useCallback, useState } from "react";
+import {useCallback, useState} from "react";
 import Popup from "./Components/Common/Popup";
 import SetPeriod from "./Components/SetPeriod";
 
@@ -11,19 +11,19 @@ function App() {
   }, [popup]);
 
   return (
-      <div className={"App"}>
-        <button className={"btn"} onClick={togglePopup}>
-          응시기간 설정 대화상자 열기
-        </button>
-        {popup && (
-            <Popup
-                title={"응시 기간 설정"}
-                body={<SetPeriod />}
-                close={togglePopup}
-                confirm={togglePopup}
-            />
-        )}
-      </div>
+    <div className={"App"}>
+      <button className={"btn"} onClick={togglePopup}>
+        응시기간 설정 대화상자 열기
+      </button>
+      {popup && (
+        <Popup
+          title={"응시 기간 설정"}
+          body={<SetPeriod/>}
+          close={togglePopup}
+          confirm={togglePopup}
+        />
+      )}
+    </div>
   );
 }
 

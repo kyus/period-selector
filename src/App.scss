@@ -21,6 +21,7 @@ $selectBorder: $defaultBorderColor;
 .App {
   padding: 20px;
   color: $defaultColor;
+
   .icon {
     transition: all .3s ease-in-out;
     user-select: none;
@@ -34,13 +35,18 @@ $selectBorder: $defaultBorderColor;
   background: $defaultBorderColor;
   margin: 32px 0;
 }
+
 .btn-wrapper {
   display: flex;
   align-items: center;
   text-align: center;
   gap: 5px;
-  &.right { justify-content: flex-end; }
+
+  &.right {
+    justify-content: flex-end;
+  }
 }
+
 .btn {
   padding: 10px;
   border: 1px solid $defaultBorderColor;
@@ -49,8 +55,13 @@ $selectBorder: $defaultBorderColor;
   cursor: pointer;
   min-width: 40px;
   user-select: none;
-  &:hover {background: $selectedColor; color: #fff; }
+
+  &:hover {
+    background: $selectedColor;
+    color: #fff;
+  }
 }
+
 .select-box {
   border: 1px solid $selectBorder;
   border-radius: $defaultBorderRadius;
@@ -59,8 +70,19 @@ $selectBorder: $defaultBorderColor;
   background: $selectBg;
   cursor: pointer;
   position: relative;
-  &:hover { background: $selectHoverBg; }
-  &.active { background: $selectActiveBg; .icon {transform: rotate(180deg)} }
+
+  &:hover {
+    background: $selectHoverBg;
+  }
+
+  &.active {
+    background: $selectActiveBg;
+
+    .icon {
+      transform: rotate(180deg)
+    }
+  }
+
   .select-title {
     font-weight: 500;
     font-size: 14px;
@@ -70,6 +92,7 @@ $selectBorder: $defaultBorderColor;
     justify-content: space-between;
     align-items: center;
   }
+
   .select-icon {
     width: 0;
     height: 0;
@@ -77,6 +100,7 @@ $selectBorder: $defaultBorderColor;
     border-width: 6px 5px 0 5px;
     border-color: $defaultColor transparent transparent transparent;
   }
+
   .entry {
     width: 100%;
     background: #fff;
@@ -90,20 +114,30 @@ $selectBorder: $defaultBorderColor;
     z-index: 1;
     animation: .3s popup forwards;
     overflow: auto;
-    &.component { height: auto; width: auto; }
+
+    &.component {
+      height: auto;
+      width: auto;
+    }
+
     .item {
       padding: 0 16px;
       cursor: pointer;
       font-size: 14px;
       line-height: 44px;
-      &:hover { background: $selectHoverBg; }
+
+      &:hover {
+        background: $selectHoverBg;
+      }
     }
   }
 }
+
 .select-group {
   display: flex;
   align-items: center;
   gap: 16px;
+
   .select-box {
     width: 100%;
   }
@@ -120,6 +154,7 @@ $selectBorder: $defaultBorderColor;
   justify-content: center;
   align-items: center;
   background: rgba(0, 0, 0, 0.8);
+
   .popup-window {
     box-sizing: border-box;
     width: 90vw;
@@ -131,6 +166,7 @@ $selectBorder: $defaultBorderColor;
     transform: translateY(20px);
     opacity: 0;
     animation: .3s popup forwards;
+
     .popup-title {
       font-weight: 700;
       font-size: 44px;
@@ -138,12 +174,14 @@ $selectBorder: $defaultBorderColor;
       color: $defaultColor;
       margin-bottom: 50px;
     }
+
     .popup-sub-title {
       font-weight: 400;
       font-size: 14px;
       padding-left: 10px;
       margin-bottom: 10px;
     }
+
     .content-wrapper {
       height: calc(100% - 40px);
     }
@@ -159,6 +197,7 @@ $selectBorder: $defaultBorderColor;
   box-shadow: $defaultShadow;
   padding: 16px 12px;
   cursor: default;
+
   .calendar-header {
     padding: 0 4px;
     display: flex;
@@ -167,28 +206,41 @@ $selectBorder: $defaultBorderColor;
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 40px;
-    .calendar-title {width: 100%;}
+
+    .calendar-title {
+      width: 100%;
+    }
+
     .btn {
       width: 36px;
       height: 36px;
       min-width: 36px;
       border-radius: 50%;
       background: transparent;
-      border:none;
+      border: none;
       padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      &:hover { background: rgba(0, 0, 0, 0.04); color: $defaultColor; }
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.04);
+        color: $defaultColor;
+      }
     }
+
     .prev-icon, .next-icon {
       display: block;
       width: 8px;
       height: 12px;
       background-image: url("data:image/svg+xml, %3Csvg width='8' height='12' viewBox='0 0 8 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L7 6L1 11' stroke='%238A8A8F'/%3E%3C/svg%3E%0A");
     }
-    .prev-icon { transform: rotate(180deg); }
+
+    .prev-icon {
+      transform: rotate(180deg);
+    }
   }
+
   .calendar-body {
     .week {
       color: #999;
@@ -198,21 +250,34 @@ $selectBorder: $defaultBorderColor;
       grid-gap: 5px 12px;
       grid-template-columns: repeat(7, 32px);
       user-select: none;
+
       .day {
         color: $defaultColor;
         border-radius: 50%;
         cursor: pointer;
-        &.prev, &.next { color: $disableColor; pointer-events: none; cursor: default; }
-        &:hover { background: $hoverBg; color: $selectedColor; }
+
+        &.prev, &.next {
+          color: $disableColor;
+          pointer-events: none;
+          cursor: default;
+        }
+
+        &:hover {
+          background: $hoverBg;
+          color: $selectedColor;
+        }
+
         &.active {
           color: #fff;
           background: $selectedColor;
+
           &:hover {
             background: $selectedHoverColor;
           }
         }
       }
     }
+
     .calendar {
       &.flex {
         display: flex;
