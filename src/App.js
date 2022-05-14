@@ -31,8 +31,12 @@ function App() {
 
   const confirm = () => {
     const {startTmpDate, endTmpDate} = period;
+    if (!endTmpDate) {
+      alert('마감일을 선택하세요.');
+      return false;
+    }
     if (startTmpDate.getTime() > endTmpDate.getTime()) {
-      alert('종료일은 시작일 이후로 설정해야 합니다.');
+      alert('마감일은 시작일 이후로 설정해야 합니다.');
       return false;
     }
     dispatch(setPeriodDate('startDate', new Date(startTmpDate)));
@@ -44,8 +48,8 @@ function App() {
   return (
     <div className={"App"}>
       <div className={"info"}>
-        <div>시작일 : {period.startDate ? dateForm(period.startDate, 'Y년 m월 d일 H시 i분') : '미설정'}</div>
-        <div>종료일 : {period.endDate ? dateForm(period.endDate, 'Y년 m월 d일 H시 i분') : '미설정'}</div>
+        <div>응시 시작일 : {period.startDate ? dateForm(period.startDate, 'Y년 m월 d일 H시 i분') : '미설정'}</div>
+        <div>응시 마감일 : {period.endDate ? dateForm(period.endDate, 'Y년 m월 d일 H시 i분') : '미설정'}</div>
       </div>
       <button className={"btn"} onClick={togglePopup}>
         응시기간 설정 대화상자 열기
