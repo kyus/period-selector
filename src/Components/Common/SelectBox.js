@@ -1,14 +1,17 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {forwardRef, useCallback, useEffect, useRef, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {setOpenedSelectBox} from "../../redux/openedSelectBox";
 
-const Entry = ({entry, change}) => {
-  const ref = useRef(null);
+const Entry = forwardRef(({entry, change}, ref) => {
   const [style, setStyle] = useState({});
   const [type, setType] = useState("");
+  const dispatch = useDispatch();
 
   const initType = () => {
     if (!entry) return false;
     const type = Array.isArray(entry) ? "array" : "component";
     setType(type);
+    dispatch(setOpenedSelectBox(ref));
   };
 
   const setEntryPosition = () => {
@@ -35,7 +38,7 @@ const Entry = ({entry, change}) => {
     </div>))}
     {type === "component" && entry}
   </div>);
-};
+});
 
 export default function SelectBox(
   {
@@ -49,9 +52,19 @@ export default function SelectBox(
   }
 ) {
   const [active, setActive] = useState(false);
-  const toggle = useCallback(() => {
+  const ref = useRef(null);
+  const openedSelectBox = useSelector(state => state.openedSelectBox);
+
+  const toggle = useCallback((event) => {
     setActive(!active);
+    event.stopPropagation();
   }, [active]);
+
+  useEffect(() => {
+    if (ref !== openedSelectBox) {
+      setActive(false);
+    }
+  }, [openedSelectBox]);
 
   return (<div
     className={"select-box " + (active ? "active" : "")}
@@ -62,6 +75,6 @@ export default function SelectBox(
       <div>{activeTitle}</div>
       <div className={"icon select-icon"}/>
     </div>
-    {active && <Entry entry={entry} change={change}/>}
+    {active && <Entry entry={entry} change={change} ref={ref} />}
   </div>);
 }
