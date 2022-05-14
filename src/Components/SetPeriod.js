@@ -41,9 +41,13 @@ const SetDateForm = ({title, dateTitle, date, type}) => {
       dispatch(setPeriodDate('endTmpDate', false));
       return;
     }
-    targetDate.setHours(period.edHour);
-    targetDate.setMinutes(period.edMinute);
-    dispatch(setPeriodDate('endTmpDate', targetDate));
+    if (!period.endTmpDate) {
+      targetDate.setHours(period.edHour);
+      targetDate.setMinutes(period.edMinute);
+      dispatch(setPeriodDate('endTmpDate', targetDate));
+      return;
+    }
+    dispatch(setPeriodDate(type, targetDate));
   }, [
     checkOutOfRange,
     date,
