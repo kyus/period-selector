@@ -18,10 +18,14 @@ $selectBorder: $defaultBorderColor;
 
 
 // init
+* {
+  box-sizing: border-box;
+}
 .App {
   padding: 20px;
   color: $defaultColor;
 
+  .info { margin-bottom: 30px; font-size: 20px; }
   .icon {
     transition: all .3s ease-in-out;
     user-select: none;
@@ -40,7 +44,7 @@ $selectBorder: $defaultBorderColor;
   display: flex;
   align-items: center;
   text-align: center;
-  gap: 5px;
+  gap: 15px;
 
   &.right {
     justify-content: flex-end;
@@ -53,7 +57,7 @@ $selectBorder: $defaultBorderColor;
   border-radius: $defaultBorderRadius;
   background: #fff;
   cursor: pointer;
-  min-width: 40px;
+  min-width: 80px;
   user-select: none;
 
   &:hover {

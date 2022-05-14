@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {dayDefault, dummyCalendar} from "../../config/conf";
 
-export default function Calendar({dayNames}) {
+export default function Calendar({dayNames, date, change}) {
   const today = new Date();
   const [dayStrArray, setDayStrArray] = useState(dayDefault);
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -9,8 +9,8 @@ export default function Calendar({dayNames}) {
   const [currentCalendar, setCurrentCalendar] = useState(dummyCalendar);
 
   const init = () => {
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
+    const currentMonth = date ? date.getMonth() : today.getMonth();
+    const currentYear = date ? date.getFullYear() : today.getFullYear();
     const dayStrArray = dayNames ? dayNames : dayDefault;
 
     setDayStrArray(dayStrArray);
@@ -90,9 +90,6 @@ export default function Calendar({dayNames}) {
 
   useEffect(init, []);
 
-  const _setDate = (value) => {
-    console.log('setDate', value);
-  };
 
   return (
     <div className={"calendar-wrapper"} onClick={(e) => e.stopPropagation()}>
@@ -121,7 +118,7 @@ export default function Calendar({dayNames}) {
               <div
                 key={k}
                 className={"day " + day.type}
-                onClick={() => _setDate(`${day.year}-${day.mon}-${day.date}`)}
+                onClick={() => change(day.year, day.mon, day.date)}
               >
                 {day.date}
               </div>
