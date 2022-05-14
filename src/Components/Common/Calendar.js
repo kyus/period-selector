@@ -9,8 +9,8 @@ export default function Calendar({dayNames, date, change, st, ed}) {
   const [currentCalendar, setCurrentCalendar] = useState(dummyCalendar);
 
   const init = () => {
-    const currentMonth = date && typeof date !== 'string' ? date.getMonth() : today.getMonth();
-    const currentYear = date && typeof date !== 'string' ? date.getFullYear() : today.getFullYear();
+    const currentMonth = date ? date.getMonth() : today.getMonth();
+    const currentYear = date ? date.getFullYear() : today.getFullYear();
     const dayStrArray = dayNames ? dayNames : dayDefault;
 
     setDayStrArray(dayStrArray);
@@ -18,7 +18,7 @@ export default function Calendar({dayNames, date, change, st, ed}) {
     setCurrentYear(currentYear);
   };
 
-  const drawCalendar = useCallback(() => {
+  const setCalendarData = useCallback(() => {
 
     const firstDay = new Date(currentYear, currentMonth).getDay();
     const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -107,15 +107,13 @@ export default function Calendar({dayNames, date, change, st, ed}) {
   }, [st, ed]);
 
   useEffect(init, []);
-  useEffect(drawCalendar, [currentYear, currentMonth]);
+  useEffect(setCalendarData, [currentYear, currentMonth]);
 
 
   return (
     <div className={"calendar-wrapper"} onClick={(e) => e.stopPropagation()}>
       <div className={"calendar-header"}>
-        <div className={"calendar-title"}>{`${currentYear}년 ${
-          currentMonth + 1
-        }월`}</div>
+        <div className={"calendar-title"}>{`${currentYear}년 ${currentMonth + 1}월`}</div>
         <div className={"btn-wrapper"}>
           <div className={"btn"} onClick={prev}>
             <i className={"prev-icon"}/>
