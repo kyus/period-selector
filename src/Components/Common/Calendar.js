@@ -1,22 +1,23 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {dayDefault, dummyCalendar} from "../../config/conf";
 
-export default function Calendar({dayNames, date, change, st, ed}) {
-  const today = new Date();
-  const [dayStrArray, setDayStrArray] = useState(dayDefault);
+export default function Calendar({date, change, st, ed}) {
+  const today = useMemo(() => new Date(), []);
+  const dayStrArray = dayDefault;
+  const [isInit, setInitFlag] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentCalendar, setCurrentCalendar] = useState(dummyCalendar);
 
-  const init = () => {
-    const currentMonth = date ? date.getMonth() : today.getMonth();
-    const currentYear = date ? date.getFullYear() : today.getFullYear();
-    const dayStrArray = dayNames ? dayNames : dayDefault;
-
-    setDayStrArray(dayStrArray);
-    setCurrentMonth(currentMonth);
-    setCurrentYear(currentYear);
-  };
+  const init = useCallback(() => {
+    if (!isInit) {
+      const currentMonth = date ? date.getMonth() : today.getMonth();
+      const currentYear = date ? date.getFullYear() : today.getFullYear();
+      setCurrentMonth(currentMonth);
+      setCurrentYear(currentYear);
+      setInitFlag(true);
+    }
+  }, [date, today, isInit]);
 
   const setCalendarData = useCallback(() => {
 
@@ -106,8 +107,8 @@ export default function Calendar({dayNames, date, change, st, ed}) {
     }
   }, [st, ed]);
 
-  useEffect(init, []);
-  useEffect(setCalendarData, [currentYear, currentMonth]);
+  useEffect(init, [init]);
+  useEffect(setCalendarData, [setCalendarData]);
 
 
   return (

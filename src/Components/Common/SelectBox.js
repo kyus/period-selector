@@ -7,14 +7,14 @@ const Entry = forwardRef(({entry, change}, ref) => {
   const [type, setType] = useState("");
   const dispatch = useDispatch();
 
-  const initType = () => {
+  const initType = useCallback(() => {
     if (!entry) return false;
     const type = Array.isArray(entry) ? "array" : "component";
     setType(type);
     dispatch(setOpenedSelectBox(ref));
-  };
+  }, [dispatch, entry, ref]);
 
-  const setEntryPosition = () => {
+  const setEntryPosition = useCallback(() => {
     try {
       const browserHeight = window.innerHeight;
       const {parentElement} = ref.current;
@@ -27,10 +27,10 @@ const Entry = forwardRef(({entry, change}, ref) => {
     } catch (e) {
       console.error(e);
     }
-  };
+  }, [ref]);
 
-  useEffect(initType, []);
-  useEffect(setEntryPosition, [type]);
+  useEffect(initType, [initType]);
+  useEffect(setEntryPosition, [type, setEntryPosition]);
 
   return (<div className={"entry " + type} ref={ref} style={style}>
     {type === "array" && entry.map((v, k) => (<div key={k} className={"item"} onClick={() => change(v.value)}>

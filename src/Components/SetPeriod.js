@@ -13,14 +13,7 @@ const SetDateForm = ({title, dateTitle, date, type}) => {
   const dispatch = useDispatch();
   const period = useSelector(state => state.period);
 
-  const init = () => {
-    const h = date.getHours();
-    const m = Math.floor(date.getMinutes() / 10) * 10;
-    changeHour(h);
-    changeMinute(m);
-  }
-
-  const checkOutOfRange = (d) => {
+  const checkOutOfRange = useCallback((d) => {
     const targetTime = d.getTime();
     const {st} = range;
     const stTime = new Date(st.y, st.m, st.d).getTime();
@@ -34,9 +27,9 @@ const SetDateForm = ({title, dateTitle, date, type}) => {
       return true;
     }
     return false;
-  }
+  }, [period, range]);
 
-  const changeCalendar = (y, m, d) => {
+  const changeCalendar = useCallback((y, m, d) => {
     const targetDate = new Date(date);
     targetDate.setFullYear(y);
     targetDate.setMonth(m);
@@ -51,9 +44,14 @@ const SetDateForm = ({title, dateTitle, date, type}) => {
     targetDate.setHours(period.edHour);
     targetDate.setMinutes(period.edMinute);
     dispatch(setPeriodDate('endTmpDate', targetDate));
-  };
+  }, [
+    checkOutOfRange,
+    date,
+    dispatch,
+    period
+  ]);
 
-  const changeHour = (time) => {
+  const changeHour = useCallback((time) => {
     try {
       const hourStr = hourEntry.find((v) => v.value === time).name;
       const timeType = (type === "startTmpDate") ? "stH" : "edH";
@@ -64,8 +62,8 @@ const SetDateForm = ({title, dateTitle, date, type}) => {
     } catch (e) {
       console.log(e);
     }
-  };
-  const changeMinute = (time) => {
+  }, [date, dispatch, type]);
+  const changeMinute = useCallback((time) => {
     try {
       const minuteStr = minEntry.find((v) => v.value === time).name;
       const timeType = (type === "startTmpDate") ? "stM" : "edM";
@@ -76,7 +74,7 @@ const SetDateForm = ({title, dateTitle, date, type}) => {
     } catch (e) {
       console.log(e);
     }
-  };
+  }, [date, dispatch, type]);
 
   const updateRange = useCallback(() => {
     if (!period.startTmpDate) {
@@ -97,8 +95,17 @@ const SetDateForm = ({title, dateTitle, date, type}) => {
     setRange({st, ed});
   }, [period]);
 
-  useEffect(init, []);
-  useEffect(updateRange, [period]);
+  const init = useCallback(() => {
+    if (date) {
+      const h = date.getHours();
+      const m = Math.floor(date.getMinutes() / 10) * 10;
+      changeHour(h);
+      changeMinute(m);
+    }
+  }, [changeHour, changeMinute, date]);
+
+  useEffect(init, [init]);
+  useEffect(updateRange, [updateRange]);
 
   return (
     <>
@@ -117,31 +124,36 @@ const SetDateForm = ({title, dateTitle, date, type}) => {
 };
 
 export default function SetPeriod() {
+  const [isInit, setInitFlag] = useState(false);
   const period = useSelector(state => state.period);
-  const startDate = period.startTmpDate ? period.startTmpDate : new Date();
-  const endDate = period.endTmpDate ? period.endTmpDate : new Date();
   const dispatch = useDispatch();
 
-  const init = () => {
-    dispatch(setPeriodDate('startTmpDate', startDate));
-    dispatch(setPeriodDate('endTmpDate', endDate));
-  }
+  const init = useCallback(() => {
+    if (!isInit) {
+      if (!period.startTmpDate || !period.endTmpDate) {
+        dispatch(setPeriodDate('startTmpDate', new Date()));
+        dispatch(setPeriodDate('endTmpDate', new Date()));
+      }
+      setInitFlag(true);
+    }
+  }, [dispatch, period, isInit]);
 
-  useEffect(init, []);
+  useEffect(init, [init]);
 
+  if (!isInit) return null;
   return (
     <>
       <SetDateForm
         title={"응시 시작일"}
-        dateTitle={period.startTmpDate ? dateForm(startDate, 'Y년 m월 d일') : '시작일을 선택하세요.'}
-        date={startDate}
+        dateTitle={period.startTmpDate ? dateForm(period.startTmpDate, 'Y년 m월 d일') : '시작일을 선택하세요.'}
+        date={period.startTmpDate}
         type={"startTmpDate"}
       />
       <div className={"divide-line"}/>
       <SetDateForm
         title={"응시 마감일"}
-        dateTitle={period.endTmpDate ? dateForm(endDate, 'Y년 m월 d일') : '마감일을 선택하세요.'}
-        date={endDate}
+        dateTitle={period.endTmpDate ? dateForm(period.endTmpDate, 'Y년 m월 d일') : '마감일을 선택하세요.'}
+        date={period.endTmpDate}
         type={"endTmpDate"}
       />
     </>
