@@ -1,7 +1,8 @@
 export const hourEntry = (() => {
   const result = [];
   for (let value = 0; value < 24; value++) {
-    const name = value < 12 ? `오전 ${value}시` : `오후 ${value}시`;
+    const time = (value % 12 === 0) ? 12 : value % 12;
+    const name = value < 12 ? `오전 ${time}시` : `오후 ${time}시`;
     result.push({value, name});
   }
   return result;
