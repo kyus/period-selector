@@ -16,9 +16,16 @@ function App() {
   }, [popup]);
 
   const cancel = () => {
-    const {startDate, endDate} = period;
-    dispatch(setPeriodDate('startTmpDate', startDate));
-    dispatch(setPeriodDate('endTmpDate', endDate));
+    try {
+      const {startDate, endDate} = period;
+      const st = startDate ? new Date(startDate) : false;
+      const ed = endDate ? new Date(endDate) : false;
+      dispatch(setPeriodDate('startTmpDate', st));
+      dispatch(setPeriodDate('endTmpDate', ed));
+    } catch(e) {
+      alert('error');
+      console.log('tmpDate restore Error', e);
+    }
     togglePopup();
   }
 
