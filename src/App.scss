@@ -298,3 +298,29 @@ $selectBorder: $defaultBorderColor;
     transform: translateY(10px);
   }
 }
+
+@media screen and (max-width: 768px) {
+  .popup-bg {
+    .popup-window {
+      height: auto;
+    }
+  }
+  .select-group {
+    display: block;
+    .select-box {
+      min-width: auto!important;
+      margin-bottom: 10px;
+    }
+  }
+}
+
+@media screen and (max-width: 489px) {
+  .popup-bg {
+    display: block;
+    .popup-window {
+      width: 100%;
+      padding: 20px;
+      .popup-title { font-size: 20px; line-height: 30px; margin-bottom: 20px; }
+    }
+  }
+}
