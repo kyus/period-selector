@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import SelectBox from "./Common/SelectBox";
 import Calendar from "./Common/Calendar";
 import {hourEntry, minEntry} from "../config/conf";
@@ -6,9 +6,10 @@ import {useSelector, useDispatch} from "react-redux";
 import {dateForm} from "../util/utils";
 import {setPeriodDate} from "../redux/period";
 
-const SetDateForm = ({title, date, type}) => {
+const SetDateForm = ({title, dateTitle, date, type}) => {
   const [hour, setHour] = useState("오전 0시");
   const [min, setMin] = useState("0분");
+  const [range, setRange] = useState({st: false, ed: false});
   const dispatch = useDispatch();
   const period = useSelector(state => state.period);
 
@@ -19,20 +20,47 @@ const SetDateForm = ({title, date, type}) => {
     changeMinute(m);
   }
 
+  const checkOutOfRange = (d) => {
+    const targetTime = d.getTime();
+    const {st} = range;
+    const stTime = new Date(st.y, st.m, st.d).getTime();
+    if (targetTime < stTime) {
+      return true;
+    }
+    if (!period.endTmpDate) {
+      return false;
+    }
+    if (targetTime > period.endTmpDate.getTime() || targetTime < period.startTmpDate.getTime()) {
+      return true;
+    }
+    return false;
+  }
+
   const changeCalendar = (y, m, d) => {
     const targetDate = new Date(date);
     targetDate.setFullYear(y);
     targetDate.setMonth(m);
     targetDate.setDate(d);
-    dispatch(setPeriodDate(type, targetDate));
+    if (checkOutOfRange(targetDate)) {
+      targetDate.setHours(period.stHour);
+      targetDate.setMinutes(period.stMinute);
+      dispatch(setPeriodDate('startTmpDate', targetDate));
+      dispatch(setPeriodDate('endTmpDate', false));
+      return;
+    }
+    targetDate.setHours(period.edHour);
+    targetDate.setMinutes(period.edMinute);
+    dispatch(setPeriodDate('endTmpDate', targetDate));
   };
 
   const changeHour = (time) => {
     try {
       const hourStr = hourEntry.find((v) => v.value === time).name;
+      const timeType = (type === "startTmpDate") ? "stH" : "edH";
       setHour(hourStr);
       date.setHours(time);
       dispatch(setPeriodDate(type, date));
+      dispatch(setPeriodDate(timeType, time));
     } catch (e) {
       console.log(e);
     }
@@ -40,23 +68,45 @@ const SetDateForm = ({title, date, type}) => {
   const changeMinute = (time) => {
     try {
       const minuteStr = minEntry.find((v) => v.value === time).name;
+      const timeType = (type === "startTmpDate") ? "stM" : "edM";
       setMin(minuteStr);
       date.setMinutes(time);
       dispatch(setPeriodDate(type, date));
+      dispatch(setPeriodDate(timeType, time));
     } catch (e) {
       console.log(e);
     }
   };
 
+  const updateRange = useCallback(() => {
+    if (!period.startTmpDate) {
+      return;
+    }
+    const stY = period.startTmpDate.getFullYear();
+    const stM = period.startTmpDate.getMonth();
+    const stD = period.startTmpDate.getDate();
+    const st = {y: stY, m: stM, d: stD};
+    if (!period.endTmpDate) {
+      setRange({st, ed: false});
+      return;
+    }
+    const edY = period.endTmpDate.getFullYear();
+    const edM = period.endTmpDate.getMonth();
+    const edD = period.endTmpDate.getDate();
+    const ed = {y: edY, m: edM, d: edD};
+    setRange({st, ed});
+  }, [period]);
+
   useEffect(init, []);
+  useEffect(updateRange, [period]);
 
   return (
     <>
       <div className={"popup-sub-title"}>{title}</div>
       <div className={"select-group"}>
         <SelectBox
-          activeTitle={dateForm(date, 'Y년 m월 d일')}
-          entry={<Calendar date={date} change={changeCalendar} />}
+          activeTitle={dateTitle}
+          entry={<Calendar date={date} change={changeCalendar} st={range.st} ed={range.ed} />}
           minWidth={250}
         />
         <SelectBox activeTitle={hour} entry={hourEntry} change={changeHour}/>
@@ -77,19 +127,23 @@ export default function SetPeriod() {
     dispatch(setPeriodDate('endTmpDate', endDate));
   }
 
-
-
   useEffect(init, []);
 
   return (
     <>
       <SetDateForm
         title={"응시 시작일"}
+        dateTitle={period.startTmpDate ? dateForm(startDate, 'Y년 m월 d일') : '시작일을 선택하세요.'}
         date={startDate}
         type={"startTmpDate"}
       />
       <div className={"divide-line"}/>
-      <SetDateForm title={"응시 마감일"} date={endDate} type={"endTmpDate"}/>
+      <SetDateForm
+        title={"응시 마감일"}
+        dateTitle={period.endTmpDate ? dateForm(endDate, 'Y년 m월 d일') : '마감일을 선택하세요.'}
+        date={endDate}
+        type={"endTmpDate"}
+      />
     </>
   );
 }

@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {dayDefault, dummyCalendar} from "../../config/conf";
 
-export default function Calendar({dayNames, date, change}) {
+export default function Calendar({dayNames, date, change, st, ed}) {
   const today = new Date();
   const [dayStrArray, setDayStrArray] = useState(dayDefault);
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -9,8 +9,8 @@ export default function Calendar({dayNames, date, change}) {
   const [currentCalendar, setCurrentCalendar] = useState(dummyCalendar);
 
   const init = () => {
-    const currentMonth = date ? date.getMonth() : today.getMonth();
-    const currentYear = date ? date.getFullYear() : today.getFullYear();
+    const currentMonth = date && typeof date !== 'string' ? date.getMonth() : today.getMonth();
+    const currentYear = date && typeof date !== 'string' ? date.getFullYear() : today.getFullYear();
     const dayStrArray = dayNames ? dayNames : dayDefault;
 
     setDayStrArray(dayStrArray);
@@ -18,7 +18,8 @@ export default function Calendar({dayNames, date, change}) {
     setCurrentYear(currentYear);
   };
 
-  useEffect(() => {
+  const drawCalendar = useCallback(() => {
+
     const firstDay = new Date(currentYear, currentMonth).getDay();
     const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
     const prevMonthDayOfEnd = new Date(currentYear, currentMonth, 0).getDate();
@@ -88,7 +89,25 @@ export default function Calendar({dayNames, date, change}) {
     setCurrentMonth(newMonth);
   }, [currentMonth, currentYear]);
 
+  const isSelected = useCallback((y, m, d) => {
+    try {
+      if (!st) {
+        return '';
+      }
+      const currentTime = new Date(y, m, d).getTime();
+      const stTime = new Date(st.y, st.m, st.d).getTime();
+      if (!ed) {
+        return (currentTime === stTime) ? ' active' : '';
+      }
+      const edTime = new Date(ed.y, ed.m, ed.d).getTime();
+      return (currentTime >= stTime && currentTime <= edTime) ? ' active' : '';
+    } catch(e) {
+      console.log('calendar selected Error', e);
+    }
+  }, [st, ed]);
+
   useEffect(init, []);
+  useEffect(drawCalendar, [currentYear, currentMonth]);
 
 
   return (
@@ -117,7 +136,7 @@ export default function Calendar({dayNames, date, change}) {
             {currentCalendar.map((day, k) => (
               <div
                 key={k}
-                className={"day " + day.type}
+                className={"day " + day.type + isSelected(day.year, day.mon, day.date)}
                 onClick={() => change(day.year, day.mon, day.date)}
               >
                 {day.date}
