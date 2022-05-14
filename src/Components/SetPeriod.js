@@ -52,7 +52,8 @@ const SetDateForm = ({title, dateTitle, date, type}) => {
     checkOutOfRange,
     date,
     dispatch,
-    period
+    period,
+    type
   ]);
 
   const changeHour = useCallback((time) => {
